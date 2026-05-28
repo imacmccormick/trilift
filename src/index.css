@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-heading: 'Outfit', system-ui, sans-serif;
+
+  --color-obsidian: #09090b;
+  --color-charcoal-900: #0f0f11;
+  --color-charcoal-800: #141417;
+  --color-charcoal-700: #1e1e24;
+  --color-charcoal-600: #2d2d35;
+  --color-neon-purple: #a855f7;
+  --color-neon-teal: #06b6d4;
+  --color-neon-pink: #ec4899;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-obsidian);
+  color: #f4f4f5;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism UI Panels */
+.glass-panel {
+  background: rgba(20, 20, 23, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(26, 26, 30, 0.85);
+  border-color: rgba(6, 182, 212, 0.25);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6), 0 0 20px rgba(6, 182, 212, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Animated Pulse Glows */
+.pulse-glow-teal {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+  animation: pulse-glow-teal-anim 3s infinite alternate;
+}
+
+@keyframes pulse-glow-teal-anim {
+  0% {
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.15);
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.35);
+  }
+}
+
+/* Modern dialog animation using top layer styles as per animate-to-from-top-layer guide */
+dialog[open],
+[popover]:popover-open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.95) translateY(15px);
+  }
+}
+
+dialog,
+[popover] {
+  opacity: 0;
+  transform: scale(0.95) translateY(15px);
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-behavior: allow-discrete;
+}
+
+dialog::backdrop,
+[popover]::backdrop {
+  background-color: rgba(0, 0, 0, 0);
+  transition:
+    display 0.3s allow-discrete,
+    overlay 0.3s allow-discrete,
+    background-color 0.3s ease-out;
+}
+
+dialog[open]::backdrop,
+[popover]:popover-open::backdrop {
+  background-color: rgba(9, 9, 11, 0.8);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  @starting-style {
+    background-color: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog,
+  [popover] {
+    transform: none;
+    transition-duration: 0.1s;
+  }
+
+  @starting-style {
+    dialog[open],
+    [popover]:popover-open {
+      transform: none;
+    }
+  }
+}
+
+/* Hide default scrollbars and style premium thin custom ones */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-obsidian);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-charcoal-600);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neon-teal);
+}
