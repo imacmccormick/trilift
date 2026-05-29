@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Exercise } from '../../types';
 import { X, Dumbbell, ShieldAlert, BookOpen } from 'lucide-react';
 
@@ -13,6 +13,8 @@ export const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({
   isOpen,
   onClose
 }) => {
+  const [activeImgIdx, setActiveImgIdx] = useState(0);
+
   if (!isOpen || !exercise) return null;
 
   // Resolve the image paths. Free-exercise-db stores them as relative paths in an array e.g., ["3_4_Sit-Up/0.jpg", "3_4_Sit-Up/1.jpg"]
@@ -56,21 +58,41 @@ export const ExerciseDetailModal: React.FC<ExerciseDetailModalProps> = ({
           
           {/* Images / Visual Guidance Carousel */}
           {imageUrls.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5">
-              {imageUrls.map((url, idx) => (
-                <div key={idx} className="relative aspect-square overflow-hidden rounded-lg bg-zinc-900 border border-white/5 flex items-center justify-center group">
-                  <img 
-                    src={url} 
-                    alt={`${exercise.name} step ${idx + 1}`}
-                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                    onError={(e) => {
-                      // Hide image on load error
-                      (e.target as HTMLElement).style.display = 'none';
-                    }}
-                  />
+            <div 
+              onClick={() => {
+                setActiveImgIdx((prev) => (prev + 1) % imageUrls.length);
+              }}
+              className="relative aspect-square md:h-72 w-full overflow-hidden rounded-xl bg-black/40 border border-white/5 flex items-center justify-center cursor-pointer hover:border-neon-teal/30 group transition-all"
+            >
+              <img 
+                src={imageUrls[activeImgIdx]} 
+                alt={`${exercise.name} step ${activeImgIdx + 1}`}
+                className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.01]"
+                loading="lazy"
+                onError={(e) => {
+                  // Hide image on load error
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+              
+              {/* Image indicator dots overlay */}
+              {imageUrls.length > 1 && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/60 px-2.5 py-1 rounded-full border border-white/10 backdrop-blur-sm">
+                  {imageUrls.map((_, idx) => (
+                    <div 
+                      key={idx}
+                      className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                        idx === activeImgIdx ? 'bg-neon-teal scale-110' : 'bg-zinc-600'
+                      }`}
+                    />
+                  ))}
                 </div>
-              ))}
+              )}
+
+              {/* Instruction Step Info Overlay */}
+              <div className="absolute top-3 right-3 bg-black/60 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold text-zinc-400 border border-white/10 backdrop-blur-sm">
+                Step {activeImgIdx + 1} of {imageUrls.length}
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8 px-4 bg-white/5 rounded-xl border border-white/5 text-zinc-400">

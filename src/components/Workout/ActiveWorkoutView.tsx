@@ -41,6 +41,7 @@ export const ActiveWorkoutView: React.FC<ActiveWorkoutViewProps> = ({
 
   // UI state
   const [expandedExerciseId, setExpandedExerciseId] = useState<string | null>(null);
+  const [activeImageIndexes, setActiveImageIndexes] = useState<Record<string, number>>({});
 
   // Timer states
   const timerDuration = 90; // default rest 90s
@@ -250,30 +251,51 @@ export const ActiveWorkoutView: React.FC<ActiveWorkoutViewProps> = ({
                 </div>
               </div>
 
-              {/* Prominent Step Images Grid */}
-              {imageUrls.length > 0 && (
-                <div className="px-4 pb-4">
-                  <div className={`grid gap-3 ${imageUrls.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                    {imageUrls.map((url, idx) => (
-                      <div 
-                        key={idx}
-                        onClick={() => setSelectedDetailExercise(ex)}
-                        className="relative h-32 sm:h-40 rounded-xl overflow-hidden bg-black/40 border border-white/5 flex items-center justify-center cursor-pointer hover:border-neon-teal/30 group transition-all"
-                      >
-                        <img 
-                          src={url} 
-                          alt={`${ex.name} step ${idx + 1}`}
-                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-102"
-                          loading="lazy"
-                          onError={(e) => {
-                            (e.target as HTMLElement).parentElement!.style.display = 'none';
-                          }}
-                        />
+              {/* Single Image Carousel (Tap to Cycle) */}
+              {imageUrls.length > 0 && (() => {
+                const currentImgIdx = activeImageIndexes[ex.id] || 0;
+                return (
+                  <div className="px-4 pb-4">
+                    <div 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const nextIdx = (currentImgIdx + 1) % imageUrls.length;
+                        setActiveImageIndexes(prev => ({ ...prev, [ex.id]: nextIdx }));
+                      }}
+                      className="relative h-48 sm:h-64 rounded-2xl overflow-hidden bg-black/40 border border-white/5 flex items-center justify-center cursor-pointer hover:border-neon-teal/30 group transition-all"
+                    >
+                      <img 
+                        src={imageUrls[currentImgIdx]} 
+                        alt={`${ex.name} step ${currentImgIdx + 1}`}
+                        className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.01]"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.target as HTMLElement).parentElement!.style.display = 'none';
+                        }}
+                      />
+                      
+                      {/* Image indicator dots overlay */}
+                      {imageUrls.length > 1 && (
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/60 px-2.5 py-1 rounded-full border border-white/10 backdrop-blur-sm">
+                          {imageUrls.map((_, idx) => (
+                            <div 
+                              key={idx}
+                              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                                idx === currentImgIdx ? 'bg-neon-teal scale-110' : 'bg-zinc-600'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Instruction Step Info Overlay */}
+                      <div className="absolute top-3 right-3 bg-black/60 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold text-zinc-400 border border-white/10 backdrop-blur-sm">
+                        Step {currentImgIdx + 1} of {imageUrls.length}
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Set Tracking Table */}
               <div className="px-4 pb-4 overflow-x-auto">
