@@ -295,15 +295,12 @@ export const ActiveWorkoutView: React.FC<ActiveWorkoutViewProps> = ({
                     </div>
                   </div>
                 );
-              })()}
-
-              {/* Set Tracking Table */}
+              })()}               {/* Set Tracking Table */}
               <div className="px-4 pb-4 overflow-x-auto">
                 <table className="w-full text-left text-xs min-w-[320px]">
                   <thead>
                     <tr className="border-b border-white/5 text-zinc-500 font-bold uppercase tracking-wider">
                       <th className="py-2 w-12 text-center">Set</th>
-                      <th className="py-2 w-28 text-center">Previous</th>
                       <th className="py-2 w-32 text-center">Weight (lbs)</th>
                       <th className="py-2 w-28 text-center">Reps</th>
                       <th className="py-2 w-12 text-center">Done</th>
@@ -321,14 +318,7 @@ export const ActiveWorkoutView: React.FC<ActiveWorkoutViewProps> = ({
                         <td className="py-3 font-semibold text-zinc-400 text-center font-mono">
                           {setIdx + 1}
                         </td>
-
-                        {/* Previous weight/reps target */}
-                        <td className="py-3 text-zinc-500 text-center font-mono">
-                          {set.previousWeight !== undefined 
-                            ? `${set.previousWeight} × ${set.previousReps}` 
-                            : '—'}
-                        </td>
-
+ 
                         {/* Weight log input with increments */}
                         <td className="py-2">
                           <div className="flex items-center justify-center gap-1.5">
@@ -341,6 +331,7 @@ export const ActiveWorkoutView: React.FC<ActiveWorkoutViewProps> = ({
                             <input 
                               type="number" 
                               value={set.weight || ''}
+                              placeholder={set.previousWeight !== undefined ? String(set.previousWeight) : '--'}
                               onChange={(e) => onLogSet(ex.id, set.id, set.reps, parseFloat(e.target.value) || 0, set.completed)}
                               className="w-14 text-center py-1 bg-charcoal-950 border border-white/5 rounded-md text-white font-bold font-mono focus:outline-none focus:border-neon-teal/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
@@ -352,7 +343,7 @@ export const ActiveWorkoutView: React.FC<ActiveWorkoutViewProps> = ({
                             </button>
                           </div>
                         </td>
-
+ 
                         {/* Reps log input with increments */}
                         <td className="py-2">
                           <div className="flex items-center justify-center gap-1.5">
@@ -365,6 +356,7 @@ export const ActiveWorkoutView: React.FC<ActiveWorkoutViewProps> = ({
                             <input 
                               type="number" 
                               value={set.reps || ''}
+                              placeholder={set.previousReps !== undefined ? String(set.previousReps) : '--'}
                               onChange={(e) => onLogSet(ex.id, set.id, parseInt(e.target.value) || 0, set.weight, set.completed)}
                               className="w-10 text-center py-1 bg-charcoal-950 border border-white/5 rounded-md text-white font-bold font-mono focus:outline-none focus:border-neon-teal/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
